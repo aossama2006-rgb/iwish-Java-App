@@ -1,4 +1,3 @@
--- i-Wish database schema (works on MariaDB 10.4+ / XAMPP and MySQL 8)
 CREATE DATABASE IF NOT EXISTS iwish CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE iwish;
 
@@ -11,8 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
     created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Only PENDING requests live here. Accepting moves the pair to `friendships`,
--- declining just deletes the row.
+-- Only PENDING requests live here. Accepting moves to `friendships` table
+-- declining just deletes the row
 CREATE TABLE IF NOT EXISTS friend_requests (
     id          INT AUTO_INCREMENT PRIMARY KEY,
     sender_id   INT       NOT NULL,
@@ -23,7 +22,7 @@ CREATE TABLE IF NOT EXISTS friend_requests (
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- One row per friendship, stored once with user_a < user_b (the server guarantees the order).
+-- One row per friendship, stored once with user_a & user_b 
 CREATE TABLE IF NOT EXISTS friendships (
     user_a INT       NOT NULL,
     user_b INT       NOT NULL,
@@ -33,12 +32,12 @@ CREATE TABLE IF NOT EXISTS friendships (
     FOREIGN KEY (user_b) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- ---------------------------------------------------------------------
--- Wish lists
--- ---------------------------------------------------------------------
 
--- The catalog users pick their gifts from. Admin adds items with plain INSERTs, e.g.
---   INSERT INTO items (name, category, price) VALUES ('Headphones', 'Electronics', 1500.00);
+
+-- Wish lists
+
+
+-- The catalog users pick their gifts from
 CREATE TABLE IF NOT EXISTS items (
     id       INT AUTO_INCREMENT PRIMARY KEY,
     name     VARCHAR(100)  NOT NULL UNIQUE,
@@ -46,7 +45,7 @@ CREATE TABLE IF NOT EXISTS items (
     price    DECIMAL(10,2) NOT NULL
 );
 
--- One row per (user, catalog item) on somebody's wish list.
+-- One row per (user, catalog item) on somebody's wish list
 CREATE TABLE IF NOT EXISTS wishlist_items (
     id       INT AUTO_INCREMENT PRIMARY KEY,
     user_id  INT          NOT NULL,
@@ -58,7 +57,7 @@ CREATE TABLE IF NOT EXISTS wishlist_items (
     FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
--- Sample catalog (prices in EGP). INSERT IGNORE + UNIQUE(name) makes re-running this file safe.
+-- Sample catalog (prices in EGP)
 INSERT IGNORE INTO items (name, category, price) VALUES
     ('Wireless Earbuds',           'Electronics',  1200.00),
     ('Bluetooth Speaker',          'Electronics',   950.00),
@@ -91,11 +90,10 @@ INSERT IGNORE INTO items (name, category, price) VALUES
     ('1000-Piece Jigsaw Puzzle',   'Games',          400.00),
     ('Building Blocks Set',        'Games',         1100.00);
 
--- ---------------------------------------------------------------------
--- Contributions (friends chip in for a wish-list item) and notifications
--- ---------------------------------------------------------------------
 
--- Every payment towards a wish-list entry. The item is "bought" once the sum reaches its price.
+-- Contributions (friends pay for a wish-list item) and notifications
+
+-- Every payment towards a wish-list entry. The item is "bought" once the sum reaches its price
 CREATE TABLE IF NOT EXISTS contributions (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     wishlist_item_id INT           NOT NULL,
@@ -106,7 +104,7 @@ CREATE TABLE IF NOT EXISTS contributions (
     FOREIGN KEY (contributor_id)   REFERENCES users(id)          ON DELETE CASCADE
 );
 
--- Messages waiting for a user. Stored in the database so offline users get them at next sign-in.
+-- Messages waiting for a user Stored in the database so offline users get them at next sign-in
 CREATE TABLE IF NOT EXISTS notifications (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     user_id    INT          NOT NULL,
