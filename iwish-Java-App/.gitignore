@@ -1,0 +1,8 @@
+# build output (libs/ is kept on purpose: it is the delivery package's third-party libraries)
+target/
+
+# IDE files
+.idea/
+*.iml
+nbactions.xml
+nbproject/private/
