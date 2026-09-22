@@ -7,7 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/** The JavaFX application: owns the window and switches between the login and main screens. */
+
 public class IWishApp extends Application {
     private static Stage stage;
 
@@ -39,7 +39,7 @@ public class IWishApp extends Application {
         stage.centerOnScreen();
     }
 
-    /** A scene with the app stylesheet applied. */
+    
     static Scene createScene(Parent root, double width, double height) {
         Scene scene = new Scene(root, width, height);
         URL css = IWishApp.class.getResource("style.css");
