@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class UserDAO {
 
-    /** Creates the account; the email must already be trimmed and lower-cased. */
+    // Creates the account, the email must already be trimmed and lower-cased
     public User register(String name, String email, String password)
             throws SQLException, BusinessException {
         String salt = PasswordUtil.newSalt();
@@ -49,7 +49,7 @@ public class UserDAO {
         throw new BusinessException("Incorrect email or password.");
     }
 
-    /** @return the user, or null if nobody has that email */
+    // return the user, or null if nobody has that email 
     public User findByEmail(String email) throws SQLException {
         String sql = "SELECT id, name, email FROM users WHERE email = ?";
         try (Connection c = Database.getConnection();
