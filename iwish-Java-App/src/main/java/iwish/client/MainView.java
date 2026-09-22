@@ -30,27 +30,35 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-/** Main screen: friends, incoming friend requests, and my wish list. */
+// Main screen: friends, incoming friend requests, and my wish list
+
 class MainView {
     private final ServerConnection server = ServerConnection.get();
     private final BorderPane root = new BorderPane();
 
-    private final ListView<User> friendsList = new ListView<>();
-    private final ListView<FriendRequest> requestsList = new ListView<>();
-    private final Tab requestsTab = new Tab("Requests");
-    private final ListView<Notification> notificationsList = new ListView<>();
-    private final Tab notificationsTab = new Tab("Notifications");
+ 
     private final TabPane tabs = new TabPane();
     private final Label banner = Ui.statusLabel();
     private final PauseTransition hideBanner = new PauseTransition(Duration.seconds(8));
     private final Label statusBar = Ui.statusLabel();
-    private final WishlistView wishlistView = new WishlistView(this::sessionEnded);
 
+    // Member 2 (Friends Management)
+    private final ListView<User> friendsList = new ListView<>();
+    private final ListView<FriendRequest> requestsList = new ListView<>();
+    private final Tab requestsTab = new Tab("Requests");
     private final Button addButton = new Button("Add friend");
-    private final Button viewWishesButton = new Button("View wish list");
+    // opens Member 3's FriendWishlistWindow
+    private final Button viewWishesButton = new Button("View wish list"); 
     private final Button removeButton = new Button("Remove");
     private final Button acceptButton = new Button("Accept");
     private final Button declineButton = new Button("Decline");
+
+    // Member 3 (Wishlist & Catalog): embedded here, built in WishlistView
+    private final WishlistView wishlistView = new WishlistView(this::sessionEnded);
+
+    //  Member 4 (Contributions & Notifications)
+    private final ListView<Notification> notificationsList = new ListView<>();
+    private final Tab notificationsTab = new Tab("Notifications");
 
     private final Timeline poller = new Timeline(new KeyFrame(Duration.seconds(5), e -> refresh()));
     private boolean refreshing;
@@ -58,7 +66,7 @@ class MainView {
     private int lastNotifiedId;
 
     MainView(User me) {
-        // header
+        // header with a greeting and the sign-out button
         Label greeting = new Label("Hi, " + me.getName() + "!");
         greeting.getStyleClass().add("greeting");
         Button signOut = new Button("Sign out");
@@ -70,20 +78,21 @@ class MainView {
         header.getStyleClass().add("header");
         header.setAlignment(Pos.CENTER_LEFT);
 
-        // banner for new notifications (click to dismiss, hides itself after a few seconds)
+        // Member 4 (Contributions & Notifications): banner for new notifications
+        // (click to dismiss; it also hides itself after a few seconds)
         banner.getStyleClass().add("banner");
         banner.setMaxWidth(Double.MAX_VALUE);
         banner.setOnMouseClicked(e -> banner.setText(""));
         hideBanner.setOnFinished(e -> banner.setText(""));
 
-        // lists
+        // Member 2 (Friends Management): friends list and incoming requests
         Ui.twoLineCells(friendsList, User::getName, User::getEmail);
         friendsList.setPlaceholder(Ui.placeholder("No friends yet.\nClick \"Add friend\" to send a request."));
         Ui.twoLineCells(requestsList, r -> r.getSender().getName(),
                 r -> r.getSender().getEmail() + " wants to be your friend");
         requestsList.setPlaceholder(Ui.placeholder("No pending friend requests."));
 
-        // buttons
+        // Member 2 (Friends Management): friends/requests buttons
         addButton.getStyleClass().add("primary-button");
         viewWishesButton.getStyleClass().add("secondary-button");
         removeButton.getStyleClass().add("danger-button");
@@ -105,7 +114,10 @@ class MainView {
             }
         });
 
-        // tabs: Friends, Requests, My Wish List
+        
+        // Friends & Requests tabs: Member 2 
+        //My Wish List tab: Member 3 (WishlistView)
+        // Notifications tab: Member 4
         Tab friendsTab = new Tab("Friends", listTab(friendsList, addButton, viewWishesButton, removeButton));
         requestsTab.setContent(listTab(requestsList, acceptButton, declineButton));
         Tab wishesTab = new Tab("My Wish List", wishlistView.getRoot());
@@ -136,7 +148,7 @@ class MainView {
         return root;
     }
 
-    // ---- actions -------------------------------------------------------
+    // Member 2 (Friends Management): friend actions
 
     private void addFriend() {
         Ui.askText(window(), "Add friend", "Your friend's email address:", "").ifPresent(email -> {
@@ -156,13 +168,14 @@ class MainView {
         });
     }
 
+    // Member 2 handles the Friends tab action; Member 3 implements FriendWishlistWindow
     private void viewFriendWishlist() {
         User friend = friendsList.getSelectionModel().getSelectedItem();
         if (friend != null) {
             new FriendWishlistWindow(window(), friend, this::sessionEnded).showAndWait();
         }
     }
-
+    
     private void removeFriend() {
         User friend = friendsList.getSelectionModel().getSelectedItem();
         if (friend == null
@@ -179,7 +192,7 @@ class MainView {
             refresh();
         });
     }
-
+   
     private void answerRequest(boolean accept) {
         FriendRequest request = requestsList.getSelectionModel().getSelectedItem();
         if (request == null) {
@@ -197,6 +210,7 @@ class MainView {
         });
     }
 
+    //  signing out returns to the login screen
     private void signOut() {
         poller.stop();
         server.sendAsync(new Request(Action.LOGOUT), r -> {
@@ -205,8 +219,9 @@ class MainView {
         });
     }
 
-    // ---- refreshing ----------------------------------------------------
-
+    // polls the server every 5 seconds
+    // Pulls friends and requests (Member 2), then notifications (Member 4)
+    // wish-list data is refreshed separately by WishlistView (Member 3).
     @SuppressWarnings("unchecked")
     private void refresh() {
         if (refreshing || leaving) {
@@ -241,7 +256,7 @@ class MainView {
         });
     }
 
-    /** One step of the refresh chain: false means "stop here" (session ended or an error was shown). */
+    // false means "stop here" (session ended or an error was shown)
     private boolean stepOk(Response response) {
         if (sessionEnded(response)) {
             return false;
@@ -254,7 +269,7 @@ class MainView {
         return true;
     }
 
-    // ---- notifications -------------------------------------------------
+    // Member 4 (Contributions & Notifications)
 
     private void applyNotifications(List<Notification> all) {
         Ui.updateItems(notificationsList, all);
@@ -275,7 +290,8 @@ class MainView {
             lastNotifiedId = fresh.get(0).getId();
             showBanner(fresh.size() == 1 ? fresh.get(0).getMessage()
                     : "You have " + fresh.size() + " new notifications. Open the Notifications tab.");
-            wishlistView.load(); // a gift may have just been bought
+            // a gift may have just been bought
+            wishlistView.load(); 
         }
         if (unread > 0 && tabs.getSelectionModel().getSelectedItem() == notificationsTab) {
             markNotificationsRead();
@@ -328,7 +344,9 @@ class MainView {
         });
     }
 
-    /** Returns true if the response means the session is gone (and takes the user back to login). */
+    // session handling used by every feature's requests 
+
+    // Returns true if the response means the session is gone (and takes the user back to login)
     private boolean sessionEnded(Response response) {
         if (!response.isSessionExpired()) {
             return false;
@@ -342,7 +360,7 @@ class MainView {
         return true;
     }
 
-    // ---- helpers -------------------------------------------------------
+   
 
     private Window window() {
         return root.getScene() == null ? null : root.getScene().getWindow();
