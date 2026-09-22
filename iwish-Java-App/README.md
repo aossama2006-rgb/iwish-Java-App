@@ -69,7 +69,7 @@ iwish/
 ├── pom.xml
 ├── README.md
 ├── .gitignore
-├── libs/                    (created by "Clean and Build": third-party jars)
+├── libs/                    
 ├── sql/
 │   └── schema.sql           (database + catalog)
 └── src/main/
