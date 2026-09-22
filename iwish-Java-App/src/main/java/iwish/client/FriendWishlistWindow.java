@@ -21,26 +21,30 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-/** A friend's wish list. You can chip in towards any item that isn't fully funded yet. */
 class FriendWishlistWindow {
     private final ServerConnection server = ServerConnection.get();
     private final Predicate<Response> sessionEnded;
     private final User friend;
 
+    // Member 3 (Wishlist & Catalog): displaying the friend's list
     private final ListView<WishItem> list = new ListView<>();
     private final Label summary = new Label("Loading...");
     private final Label placeholder = Ui.placeholder("Loading...");
-    private final Button contributeButton = new Button("Contribute");
     private final Stage stage = new Stage();
+
+    // Member 4 (Contributions & Notifications)
+    private final Button contributeButton = new Button("Contribute");
 
     FriendWishlistWindow(Window owner, User friend, Predicate<Response> sessionEnded) {
         this.friend = friend;
         this.sessionEnded = sessionEnded;
 
+        // Member 3 (Wishlist & Catalog): render the friend's items
         Ui.twoLineCells(list, w -> w.getItem().getName(), Ui::friendWishSubtitle);
         list.setPlaceholder(placeholder);
         summary.getStyleClass().add("summary-label");
 
+        // Member 4 (Contributions & Notifications): the Contribute button
         contributeButton.getStyleClass().add("primary-button");
         contributeButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
             WishItem selected = list.getSelectionModel().getSelectedItem();
@@ -77,6 +81,8 @@ class FriendWishlistWindow {
         stage.showAndWait();
     }
 
+    // Member 4 (Contributions & Notifications)
+
     private void contribute() {
         WishItem w = list.getSelectionModel().getSelectedItem();
         if (w == null || w.isBought()) {
@@ -105,6 +111,8 @@ class FriendWishlistWindow {
         });
     }
 
+    // Member 3 (Wishlist & Catalog): loads/refreshes the friend's list
+    // also called after a contribution, since a gift may now be fully funded
     @SuppressWarnings("unchecked")
     private void load() {
         server.sendAsync(new Request(Action.GET_FRIEND_WISHLIST).with("friendId", friend.getId()), r -> {
