@@ -8,7 +8,7 @@ import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-/** Salted PBKDF2 password hashing. Plain passwords are never stored. */
+// password hashing
 public final class PasswordUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final int ITERATIONS = 120_000;
