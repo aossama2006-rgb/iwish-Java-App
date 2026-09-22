@@ -26,7 +26,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-/** Lets the user browse the catalog and add items to their wish list. Stays open to add several. */
+// Lets the user browse the catalog and add items to their wish list
+// user can add several items 
 class CatalogWindow {
     private final ServerConnection server = ServerConnection.get();
     private final Predicate<Response> sessionEnded;
