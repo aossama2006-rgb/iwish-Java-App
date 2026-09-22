@@ -50,8 +50,7 @@ and chip in to buy them the gifts they want.
 ### Run
 1. Right-click `iwish.server.ServerMain` (package `iwish.server`) > **Run File**.
    A window opens — click **Start**. It checks the database connection, then opens port 5555.
-   Click **Stop** to shut it down; the log area shows every client connecting and every
-   request it makes.
+   Click **Stop** to shut it down.
 2. Right-click `iwish.client.ClientMain` (package `iwish.client`) > **Run File**.
    To test with several users at once, open more clients from a Command Prompt in the
    project folder (after Clean and Build, so `target/` and `libs/` exist):
