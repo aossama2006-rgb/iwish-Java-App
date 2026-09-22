@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/** A catalog item users can put on their wish list. */
+// A catalog item users can put on their wish list
 public class Item implements Serializable {
     private static final long serialVersionUID = 1L;
 
