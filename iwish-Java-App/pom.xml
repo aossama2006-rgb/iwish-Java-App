@@ -13,18 +13,15 @@
     <properties>
         <maven.compiler.release>23</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- what NetBeans runs for "Run Project" (F6); use Run File on iwish.client.ClientMain for the client -->
         <exec.mainClass>iwish.server.ServerMain</exec.mainClass>
     </properties>
 
     <dependencies>
-        <!-- JavaFX (client GUI). Maven picks the right platform jars automatically. -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>25.0.1</version>
         </dependency>
-        <!-- MariaDB/MySQL JDBC driver (only needed by the server at runtime) -->
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
@@ -34,8 +31,6 @@
 
     <build>
         <plugins>
-            <!-- "Clean and Build" also copies every third-party jar into the libs/ folder,
-                 so the delivery package contains the libraries. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
