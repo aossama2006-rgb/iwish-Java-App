@@ -17,7 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/** The server window: Start / Stop. */
+// The server window: Start / Stop
 public class ServerApp extends Application {
     private final IWishServer server = new IWishServer(IWishServer.DEFAULT_PORT);
 
@@ -67,7 +67,7 @@ public class ServerApp extends Application {
         server.stop();
     }
 
-    /** Checks the database, then opens the port. Done off the UI thread because either can be slow. */
+    // Checks the database, then opens the port, Done off the UI thread because either can be slow
     private void startServer() {
         startButton.setDisable(true);
         setMessage("Connecting to the database...", false);
@@ -88,7 +88,7 @@ public class ServerApp extends Application {
 
     private String tryStart() {
         try (Connection ignored = Database.getConnection()) {
-            // the database is reachable
+            
         } catch (SQLException e) {
             return "Can't connect to the database. Is MySQL/MariaDB running? (" + e.getMessage() + ")";
         }
