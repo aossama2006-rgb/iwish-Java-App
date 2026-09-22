@@ -48,7 +48,7 @@ public class FriendDAO {
         return result;
     }
 
-    /** Sends a friend request to the user with the given email. Returns the target user. */
+    //Sends a friend request to the user with the given email,Returns the target user
     public User sendRequest(int senderId, String targetEmail) throws SQLException, BusinessException {
         User target = users.findByEmail(targetEmail);
         if (target == null) {
@@ -78,7 +78,7 @@ public class FriendDAO {
         return target;
     }
 
-    /** Accepts a request addressed to userId. Returns the new friend. */
+    // Accepts a request addressed to userId, Returns the new friend
     public User acceptRequest(int userId, int requestId) throws SQLException, BusinessException {
         try (Connection c = Database.getConnection()) {
             c.setAutoCommit(false);
@@ -149,7 +149,7 @@ public class FriendDAO {
         }
     }
 
-    // ---- helpers -------------------------------------------------------
+    
 
     private boolean areFriends(Connection c, int a, int b) throws SQLException {
         try (PreparedStatement ps = c.prepareStatement(
