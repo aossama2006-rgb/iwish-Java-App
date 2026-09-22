@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** Accepts client connections. start()/stop() are kept separate so a GUI can drive them later. */
+// Accepts client connections, start()/stop() 
 public class IWishServer {
     public static final int DEFAULT_PORT = 5555;
     private static final Logger LOG = Logger.getLogger(IWishServer.class.getName());
