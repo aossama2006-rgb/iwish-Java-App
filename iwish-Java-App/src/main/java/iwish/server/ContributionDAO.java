@@ -9,16 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** Friends chipping in for wish-list items, and the notifications sent when a gift is fully funded. */
+// Friends Pay for wish-list items, and the notifications sent when a gift is fully funded
 public class ContributionDAO {
     private final FriendDAO friends = new FriendDAO();
     private final NotificationDAO notifications = new NotificationDAO();
 
-    /**
-     * Adds a contribution from contributorId to the wish-list entry wishId.
-     *
-     * @return a message to show the contributor
-     */
+    
+     // Adds a contribution from contributorId to the wish-list entry wishId
+   
+     //return a message to show the contributor
     public String contribute(int contributorId, int wishId, String amountText)
             throws SQLException, BusinessException {
         BigDecimal amount = parseAmount(amountText);
@@ -37,7 +36,7 @@ public class ContributionDAO {
 
     private String addContribution(Connection c, int contributorId, int wishId, BigDecimal amount)
             throws SQLException, BusinessException {
-        // Lock the entry so two friends can't overfund it at the same moment.
+        // Lock the entry so two friends can't overfund it at the same moment
         try (PreparedStatement ps = c.prepareStatement(
                 "SELECT id FROM wishlist_items WHERE id = ? FOR UPDATE")) {
             ps.setInt(1, wishId);
@@ -98,7 +97,7 @@ public class ContributionDAO {
         return "Contribution added. " + money(stillNeeded) + " is still needed for \"" + itemName + "\".";
     }
 
-    /** Tells every contributor (as buyers) and the owner (as receiver) that the gift is complete. */
+    // Tells every contributor (as buyers) and the owner (as receiver) that the gift is complete
     private void notifyGiftComplete(Connection c, int wishId, int ownerId, String ownerName, String itemName)
             throws SQLException {
         List<Integer> buyerIds = new ArrayList<>();
@@ -118,12 +117,12 @@ public class ContributionDAO {
             }
         }
 
-        // Requirement 8: each buyer hears that the price is complete.
+        //  each buyer hears that the price is complete
         for (int i = 0; i < buyerIds.size(); i++) {
             notifications.add(c, buyerIds.get(i), "The gift \"" + itemName + "\" for " + ownerName
                     + " is now fully funded. Your share: " + money(shares.get(i)) + ". Thank you!");
         }
-        // Requirement 9: the receiver hears who bought it.
+        //  the receiver hears who bought it
         notifications.add(c, ownerId, "Good news! \"" + itemName + "\" from your wish list has been bought by "
                 + joinNames(buyerNames) + ".");
     }
@@ -139,9 +138,8 @@ public class ContributionDAO {
         }
     }
 
-    // ---- helpers (package-private so they can be tested without a database) ----
+   
 
-    /** Accepts "250", "99.5", "99.50". Rejects zero, negatives, junk and more than 2 decimals. */
     static BigDecimal parseAmount(String text) throws BusinessException {
         if (text == null || text.isBlank()) {
             throw new BusinessException("Enter the amount you want to contribute.");
