@@ -19,7 +19,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-/** Sign-in and registration screen. */
+// Sign-in and registration screen
 class LoginView {
     private final StackPane root = new StackPane();
 
