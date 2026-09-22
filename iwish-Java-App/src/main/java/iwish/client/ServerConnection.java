@@ -12,10 +12,8 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import javafx.application.Platform;
 
-/**
- * The client's single connection to the server (plain java.net sockets + object streams).
- * Requests run one at a time on a background thread; callbacks run on the JavaFX thread.
- */
+
+ // Requests run one at a time on a background thread, callbacks run on the JavaFX thread
 public final class ServerConnection {
     private static final ServerConnection INSTANCE = new ServerConnection();
 
@@ -74,7 +72,7 @@ public final class ServerConnection {
         }
     }
 
-    /** Sends the request in the background and calls onDone on the JavaFX thread. */
+    // Sends the request in the background and calls onDone on the thread
     public void sendAsync(Request request, Consumer<Response> onDone) {
         worker.execute(() -> {
             Response response;
