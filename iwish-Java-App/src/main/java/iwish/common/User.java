@@ -3,7 +3,7 @@ package iwish.common;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** Public view of a user. Never carries the password. */
+// Public view of a user
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
