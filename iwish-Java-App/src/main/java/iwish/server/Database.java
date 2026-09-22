@@ -4,10 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Database connection settings. Override with JVM flags if needed, e.g.
- * -Diwish.db.user=root -Diwish.db.password=secret
- */
+
 public final class Database {
     private static final String URL = System.getProperty("iwish.db.url",
             "jdbc:mariadb://localhost:3306/iwish");
