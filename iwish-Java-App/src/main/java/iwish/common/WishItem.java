@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-/** One entry on a wish list: a catalog item, the owner's optional note, and how much is funded. */
+// One entry on a wish list: a catalog item, the owner's optional note, and how much is funded
 public class WishItem implements Serializable {
     private static final long serialVersionUID = 2L;
 
@@ -20,7 +20,7 @@ public class WishItem implements Serializable {
         this.funded = funded == null ? BigDecimal.ZERO : funded;
     }
 
-    /** The wish-list entry id (not the catalog item id). */
+    
     public int getId() {
         return id;
     }
@@ -33,10 +33,9 @@ public class WishItem implements Serializable {
         return note;
     }
 
-    /**
-     * How much friends have contributed. On your own list this is either zero or the full
-     * price, so partial progress stays a surprise.
-     */
+    
+    //How much friends have contributed. On your own list 
+   
     public BigDecimal getFunded() {
         return funded;
     }
