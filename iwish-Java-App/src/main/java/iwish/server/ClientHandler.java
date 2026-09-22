@@ -18,20 +18,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-/** Serves one connected client. The signed-in user lives here, for the life of the connection. */
 class ClientHandler implements Runnable {
     private static final Logger LOG = Logger.getLogger(ClientHandler.class.getName());
     private static final Pattern EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
+    // Member 5 (Server & Networking): connection state
     private final Socket socket;
     private final Runnable onClose;
+    private User currentUser;
+
+    // Member 1 (Authentication & User Management)
     private final UserDAO users = new UserDAO();
+
+    // Member 2 (Friends Management)
     private final FriendDAO friends = new FriendDAO();
+
+    // Member 3 (Wishlist & Catalog)
     private final ItemDAO items = new ItemDAO();
     private final WishlistDAO wishlists = new WishlistDAO();
+
+    // Member 4 (Contributions & Notifications)
     private final ContributionDAO contributions = new ContributionDAO();
     private final NotificationDAO notifications = new NotificationDAO();
-    private User currentUser;
 
     ClientHandler(Socket socket, Runnable onClose) {
         this.socket = socket;
@@ -43,7 +51,6 @@ class ClientHandler implements Runnable {
         try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
             out.flush();
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            // Only accept our own protocol classes and basic JDK types from clients.
             in.setObjectInputFilter(ObjectInputFilter.Config.createFilter(
                     "iwish.common.*;java.lang.*;java.util.*;!*"));
             while (true) {
@@ -69,6 +76,8 @@ class ClientHandler implements Runnable {
     private Response handle(Request req) {
         try {
             Action action = req.getAction();
+
+            // Member 1 (Authentication & User Management): sign-in works with no session
             switch (action) {
                 case REGISTER:
                     return register(req);
@@ -77,13 +86,19 @@ class ClientHandler implements Runnable {
                 default:
                     break;
             }
+
+            // Member 5 (Server & Networking): every other request needs a signed-in user
             if (currentUser == null) {
                 return Response.sessionExpired();
             }
+
             switch (action) {
+                // Member 1 (Authentication & User Management)
                 case LOGOUT:
                     currentUser = null;
                     return Response.ok("Signed out.");
+
+                // Member 2 (Friends Management)
                 case ADD_FRIEND:
                     return addFriend(req);
                 case REMOVE_FRIEND:
@@ -99,6 +114,8 @@ class ClientHandler implements Runnable {
                 case DECLINE_REQUEST:
                     friends.declineRequest(currentUser.getId(), req.getInt("requestId"));
                     return Response.ok("Request declined.");
+
+                // Member 3 (Wishlist & Catalog)
                 case GET_CATALOG:
                     return Response.ok("OK", items.getCatalog());
                 case GET_MY_WISHLIST:
@@ -117,6 +134,8 @@ class ClientHandler implements Runnable {
                 case GET_FRIEND_WISHLIST:
                     return Response.ok("OK",
                             wishlists.getFriendWishlist(currentUser.getId(), req.getInt("friendId")));
+
+                // Member 4 (Contributions & Notifications)
                 case CONTRIBUTE:
                     return Response.ok(contributions.contribute(currentUser.getId(),
                             req.getInt("wishId"), req.getString("amount")));
@@ -125,9 +144,12 @@ class ClientHandler implements Runnable {
                 case MARK_NOTIFICATIONS_READ:
                     notifications.markAllRead(currentUser.getId());
                     return Response.ok("OK");
+
+                // Member 5 (Server & Networking)
                 default:
                     return Response.error("Unknown request.");
             }
+        // Member 5 (Server & Networking): error handling shared by every feature
         } catch (BusinessException e) {
             return Response.error(e.getMessage());
         } catch (SQLException e) {
@@ -138,6 +160,8 @@ class ClientHandler implements Runnable {
             return Response.error("Bad request.");
         }
     }
+
+    // Member 1 (Authentication & User Management) 
 
     private Response register(Request req) throws SQLException, BusinessException {
         String name = clean(req.getString("name"));
@@ -167,6 +191,8 @@ class ClientHandler implements Runnable {
         return Response.ok("Welcome back, " + currentUser.getName() + "!", currentUser);
     }
 
+    // Member 2 (Friends Management) 
+
     private Response addFriend(Request req) throws SQLException, BusinessException {
         String email = clean(req.getString("email")).toLowerCase(Locale.ROOT);
         if (email.isEmpty()) {
@@ -175,6 +201,8 @@ class ClientHandler implements Runnable {
         User target = friends.sendRequest(currentUser.getId(), email);
         return Response.ok("Friend request sent to " + target.getName() + ".");
     }
+
+    // Member 5 (Server & Networking): small shared helper
 
     private static String clean(String s) {
         return s == null ? "" : s.trim();
