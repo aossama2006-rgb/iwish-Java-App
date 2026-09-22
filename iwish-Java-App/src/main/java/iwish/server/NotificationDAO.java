@@ -11,7 +11,7 @@ public class NotificationDAO {
     private static final int MAX_LENGTH = 400;
     private static final int RECENT_LIMIT = 50;
 
-    /** Adds a notification using the caller's connection, so it commits (or rolls back) with the caller. */
+    // Adds a notification using the caller's connection, so it commits (or rolls back) with the caller
     public void add(Connection c, int userId, String message) throws SQLException {
         String text = message.length() > MAX_LENGTH ? message.substring(0, MAX_LENGTH - 3) + "..." : message;
         try (PreparedStatement ps = c.prepareStatement(
@@ -22,7 +22,7 @@ public class NotificationDAO {
         }
     }
 
-    /** The user's most recent notifications, newest first. */
+    // The user's most recent notifications, newest first
     public ArrayList<Notification> getRecent(int userId) throws SQLException {
         String sql = "SELECT id, message, is_read, created_at FROM notifications "
                 + "WHERE user_id = ? ORDER BY id DESC LIMIT " + RECENT_LIMIT;
