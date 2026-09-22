@@ -34,7 +34,6 @@ public enum Action {
 
     // Member 4 (Contributions & Notifications): paying towards a gift, being notified
     CONTRIBUTE,             
-    // params: wishId, amount (text, e.g. "250" or "99.50")
     GET_NOTIFICATIONS,
     MARK_NOTIFICATIONS_READ
 }
