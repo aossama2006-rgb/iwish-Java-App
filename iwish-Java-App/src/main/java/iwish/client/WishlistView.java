@@ -19,7 +19,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 
-/** The "My Wish List" tab: add items from the catalog, edit their notes, remove them. */
+// The "My Wish List" tab: add items from the catalog, edit their notes, remove them
 class WishlistView {
     private final ServerConnection server = ServerConnection.get();
     private final Predicate<Response> sessionEnded;
@@ -31,7 +31,7 @@ class WishlistView {
     private final Button editButton = new Button("Edit note");
     private final Button removeButton = new Button("Remove");
 
-    /** @param sessionEnded returns true (after taking care of it) if the response means "signed out" */
+    
     WishlistView(Predicate<Response> sessionEnded) {
         this.sessionEnded = sessionEnded;
 
