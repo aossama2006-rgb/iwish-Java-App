@@ -29,7 +29,7 @@ public class Response implements Serializable {
         return new Response(false, message, null, false);
     }
 
-    /** The connection has no signed-in user (e.g. the client reconnected). */
+    //The connection has no signed-in user
     public static Response sessionExpired() {
         return new Response(false, "Please sign in again.", null, true);
     }
