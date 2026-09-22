@@ -3,14 +3,14 @@ package iwish.common;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** A message for a user, e.g. "a gift was fully funded". */
+// A message for a user, e.g. "a gift was fully funded"
 public class Notification implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final int id;
     private final String message;
     private final boolean read;
-    private final long createdAt; // epoch milliseconds
+    private final long createdAt; 
 
     public Notification(int id, String message, boolean read, long createdAt) {
         this.id = id;
