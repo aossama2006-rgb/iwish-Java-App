@@ -15,10 +15,7 @@ public class WishlistDAO {
 
     private final FriendDAO friends = new FriendDAO();
 
-    /**
-     * @param hidePartialProgress true for the owner's own view: they only learn that a gift is
-     *                            bought once it is fully funded, not while friends are chipping in
-     */
+  
     public ArrayList<WishItem> getWishlist(int userId, boolean hidePartialProgress) throws SQLException {
         String sql = "SELECT w.id, w.note, i.id, i.name, i.category, i.price, "
                 + "COALESCE((SELECT SUM(c.amount) FROM contributions c WHERE c.wishlist_item_id = w.id), 0) "
@@ -42,7 +39,7 @@ public class WishlistDAO {
         return result;
     }
 
-    /** A user may only look at the wish lists of their friends. */
+    // A user may only look at the wish lists of their friends
     public ArrayList<WishItem> getFriendWishlist(int viewerId, int friendId)
             throws SQLException, BusinessException {
         if (!friends.areFriends(viewerId, friendId)) {
@@ -51,7 +48,7 @@ public class WishlistDAO {
         return getWishlist(friendId, false);
     }
 
-    /** Adds a catalog item to the user's wish list. Returns the item that was added. */
+    // Adds a catalog item to the user's wish list, Returns the item that was added
     public Item add(int userId, int itemId, String note) throws SQLException, BusinessException {
         String cleanNote = cleanNote(note);
         try (Connection c = Database.getConnection()) {
@@ -95,7 +92,7 @@ public class WishlistDAO {
         try (Connection c = Database.getConnection()) {
             c.setAutoCommit(false);
             try {
-                // Lock the entry (contributions lock the same row) so nobody can chip in mid-delete.
+                
                 try (PreparedStatement ps = c.prepareStatement(
                         "SELECT id FROM wishlist_items WHERE id = ? AND user_id = ? FOR UPDATE")) {
                     ps.setInt(1, wishId);
@@ -129,7 +126,7 @@ public class WishlistDAO {
         }
     }
 
-    // ---- helpers -------------------------------------------------------
+   
 
     private static String cleanNote(String note) throws BusinessException {
         String n = note == null ? "" : note.trim();
