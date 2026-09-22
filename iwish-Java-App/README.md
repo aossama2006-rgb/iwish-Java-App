@@ -174,7 +174,7 @@ Repository: **https://github.com/aossama2006-rgb/iwish-Java-App**
 A short video demonstrating registration, adding a friend, building a wish list, viewing a
 friend's wish list, contributing to a gift, and receiving the resulting notifications:
 
-**[link to be added]**
+**https://drive.google.com/file/d/1t-I7wKKu6v3kwuoUQ9TW6uYq4txolZ0T/view?usp=sharing**
 
 ---
 
