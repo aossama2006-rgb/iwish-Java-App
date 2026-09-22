@@ -3,7 +3,7 @@ package iwish.common;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** A pending friend request as seen by the receiver. */
+// A pending friend request as seen by the receiver
 public class FriendRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
